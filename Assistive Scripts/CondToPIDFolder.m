@@ -1,4 +1,5 @@
 %% Sort LME results from Condition-specific to participant-specific folders
+%  This script sorts the outputs from TrainingTesting_participantSpecific.m
 %  e.g. Cond_01 contained all estimated torques of all participants within
 %       condition 1. This script moves estimates torques of each
 %       participant to their respective folders so that S01_All has
