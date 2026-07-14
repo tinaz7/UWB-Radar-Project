@@ -8,7 +8,7 @@ library(emmeans)
 
 #### Find file
 setwd("C:/Users/zheng/OneDrive/Desktop/ENGG7291 Data/Condition Significance")
-ex <- fread('Comparison Parameters.csv') #this is all data
+ex <- fread('ComparisonParameters.csv') #this is all data
 
 ex$PID <- as.factor(ex$PID)
 ex$COND <- as.factor(ex$COND)
