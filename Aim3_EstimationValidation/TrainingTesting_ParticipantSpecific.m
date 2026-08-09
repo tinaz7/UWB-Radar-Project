@@ -13,8 +13,8 @@
 clear variables
 myDir = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\GaitCycleAveraged";
 LMEDir = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\LME models\Participant dependent";
-PIDs = '10';
-cond = 12; % Condition for testing (to be excluded from training)
+PIDs = '01';
+cond = 1; % Condition for testing (to be excluded from training)
 f = waitbar(0,'Loading Data','Name','Status');
 set(groot, 'defaultTextInterpreter', 'none');
 
