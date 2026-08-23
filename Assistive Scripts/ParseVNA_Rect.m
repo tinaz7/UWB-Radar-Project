@@ -2,8 +2,8 @@
 
 clear
 
-files = dir("Z:\Data Collection 3\Raw Data\S02\UWB\VNA Data*.txt");
-outLoc = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\UWB\S02\RawData_Rect";
+files = dir("Z:\Data Collection 3\Raw Data\S10\UWB\VNA Data*.txt");
+outLoc = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\UWB\S10\RawData_Rect";
 
 for file_idx = 1 : length(files)
     file = files(file_idx);

@@ -7,15 +7,15 @@
 %% Section 1: Select files
 clear variables;
 
-PID = "01";
+PID = "07";
 
 path = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data";
 uwbFileName = fullfile(path,"UWB\S" + PID + "\RawData_Rect\" + ...
-                       "VNA Data 2026_02_19 17-12-21.mat");
+                       "VNA Data 2026_04_01 16-25-17.mat");
 qtmFileName = fullfile(path,"EXO_UWB\Data\ExoUWB_S" + PID + "\" + ...
-                       "ExoUWB_S" + PID + "_Trial_0028.mat");
+                       "ExoUWB_S" + PID + "_Trial_0026.mat");
 outName = fullfile(path, "UWB\S" + PID + "\ProcessedData_Rect\" + ...
-                       "RadarData_S" + PID + "_Trial_0028.mat");
+                       "RadarData_S" + PID + "_Trial_0026.mat");
 
 load(uwbFileName)
 qtmFile = load(qtmFileName);
@@ -37,7 +37,7 @@ numSearch = round(min([length(starts),length(ends)]) / 2);
 [~, idx] = max(ends(1:numSearch) - starts(1:numSearch));
 
 syncIdx = starts(idx);
-syncIdx = 4251;
+% syncIdx = 4251;
 
 figure(1); clf
 plot(RadarTrig)

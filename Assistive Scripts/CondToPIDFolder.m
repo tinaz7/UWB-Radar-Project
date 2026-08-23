@@ -5,7 +5,7 @@
 %       participant to their respective folders so that S01_All has
 %       estimated torques from all 12 conditions
 
-myDir = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\LME models\Participant dependent";
+myDir = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\LME models\Rect";
 sourceFolders = dir(fullfile(myDir, "Cond_*"));
 destFolders = dir(fullfile(myDir, "S*ALL"));
 

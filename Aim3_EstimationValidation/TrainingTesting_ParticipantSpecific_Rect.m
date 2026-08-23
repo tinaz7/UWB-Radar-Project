@@ -10,10 +10,10 @@
 
 %% Section 1: Training and Testing
 clear variables
-myDir = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\GaitCycleAveraged";
-LMEDir = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\LME models\Participant dependent";
+myDir = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\GaitCycleAveraged\Rectangular data";
+LMEDir = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\LME models\Rect";
 PIDs = '01';
-cond = 1; % Condition for testing (to be excluded from training)
+cond = 12; % Condition for testing (to be excluded from training)
 f = waitbar(0,'Loading Data','Name','Status');
 set(groot, 'defaultTextInterpreter', 'none');
 
@@ -25,15 +25,15 @@ MG = zeros(nDat * 100, 1); LG = zeros(nDat * 100, 1);
 FL = zeros(nDat * 100, 1); FV = zeros(nDat * 100, 1);
 FA = zeros(nDat * 100, 1); FP = zeros(nDat * 100, 1);
 
-S11_M = zeros(nDat*100, 51); S11_P = zeros(nDat*100, 51);
-S12_M = zeros(nDat*100, 51); S12_P = zeros(nDat*100, 51);
-S21_M = zeros(nDat*100, 51); S21_P = zeros(nDat*100, 51);
-S22_M = zeros(nDat*100, 51); S22_P = zeros(nDat*100, 51);
+S11_R = zeros(nDat*100, 51); S11_I = zeros(nDat*100, 51);
+S12_R = zeros(nDat*100, 51); S12_I = zeros(nDat*100, 51);
+S21_R = zeros(nDat*100, 51); S21_I = zeros(nDat*100, 51);
+S22_R = zeros(nDat*100, 51); S22_I = zeros(nDat*100, 51);
 
 count = 0;
 for j = 1 : size(PIDs, 1)
     n = PIDs(j,:);
-    files = dir(fullfile(myDir, ['S', n], '*.mat'));
+    files = dir(fullfile(myDir, ['S', n, '*.mat']));
   
     for k = 1 : 12
         
@@ -43,7 +43,7 @@ for j = 1 : size(PIDs, 1)
         end
 
         fprintf("In training dataset: " + string(k) + "\n")
-        file = load(fullfile(myDir, ['S', n], files(k).name));
+        file = load(fullfile(myDir, files(k).name));
         ResDat = file.ALL.ValDat;
         FixDat = file.ALL;
         bounds = count*100 + 1 : 100*(count+1);
@@ -55,41 +55,41 @@ for j = 1 : size(PIDs, 1)
         FL(bounds) = ResDat.FL(2:end); FA(bounds) = ResDat.FA(2:end);
         FP(bounds) = ResDat.FP(2:end); FV(bounds) = ResDat.FV(2:end);
 
-        file = load(fullfile(myDir, ['S', n], files(k).name));
-        S11_M(bounds, :) = FixDat.S11_M_Dat{2:end, :};
-        S11_P(bounds, :) = FixDat.S11_P_Dat{2:end, :};
-        S12_M(bounds, :) = FixDat.S12_M_Dat{2:end, :};
-        S12_P(bounds, :) = FixDat.S12_P_Dat{2:end, :};
-        S21_M(bounds, :) = FixDat.S21_M_Dat{2:end, :};
-        S21_P(bounds, :) = FixDat.S21_P_Dat{2:end, :};
-        S22_M(bounds, :) = FixDat.S22_M_Dat{2:end, :};
-        S22_P(bounds, :) = FixDat.S22_P_Dat{2:end, :};
+        file = load(fullfile(myDir, files(k).name));
+        S11_R(bounds, :) = FixDat.S11_R_Dat{2:end, :};
+        S11_I(bounds, :) = FixDat.S11_I_Dat{2:end, :};
+        S12_R(bounds, :) = FixDat.S12_R_Dat{2:end, :};
+        S12_I(bounds, :) = FixDat.S12_I_Dat{2:end, :};
+        S21_R(bounds, :) = FixDat.S21_R_Dat{2:end, :};
+        S21_I(bounds, :) = FixDat.S21_I_Dat{2:end, :};
+        S22_R(bounds, :) = FixDat.S22_R_Dat{2:end, :};
+        S22_I(bounds, :) = FixDat.S22_I_Dat{2:end, :};
 
         count = count + 1;
     end
 end
 
 % Sort each array into a table for easier access of each frequency
-S11_M_table = array2table(S11_M); S11_P_table = array2table(S11_P);
-S12_M_table = array2table(S12_M); S12_P_table = array2table(S12_P);
-S21_M_table = array2table(S21_M); S21_P_table = array2table(S21_P);
-S22_M_table = array2table(S22_M); S22_P_table = array2table(S22_P);
-S11_M_table.Properties.VariableNames = strcat("S11_M_", string(1:51));
-S11_P_table.Properties.VariableNames = strcat("S11_P_", string(1:51));
-S12_M_table.Properties.VariableNames = strcat("S12_M_", string(1:51));
-S12_P_table.Properties.VariableNames = strcat("S12_P_", string(1:51));
-S21_M_table.Properties.VariableNames = strcat("S21_M_", string(1:51));
-S21_P_table.Properties.VariableNames = strcat("S21_P_", string(1:51));
-S22_M_table.Properties.VariableNames = strcat("S22_M_", string(1:51));
-S22_P_table.Properties.VariableNames = strcat("S22_P_", string(1:51));
+S11_R_table = array2table(S11_R); S11_I_table = array2table(S11_I);
+S12_R_table = array2table(S12_R); S12_I_table = array2table(S12_I);
+S21_R_table = array2table(S21_R); S21_I_table = array2table(S21_I);
+S22_R_table = array2table(S22_R); S22_I_table = array2table(S22_I);
+S11_R_table.Properties.VariableNames = strcat("S11_R_", string(1:51));
+S11_I_table.Properties.VariableNames = strcat("S11_I_", string(1:51));
+S12_R_table.Properties.VariableNames = strcat("S12_R_", string(1:51));
+S12_I_table.Properties.VariableNames = strcat("S12_I_", string(1:51));
+S21_R_table.Properties.VariableNames = strcat("S21_R_", string(1:51));
+S21_I_table.Properties.VariableNames = strcat("S21_I_", string(1:51));
+S22_R_table.Properties.VariableNames = strcat("S22_R_", string(1:51));
+S22_I_table.Properties.VariableNames = strcat("S22_I_", string(1:51));
 
 tbl1 = table(PID, COND, TL, TR, MG, LG, FL, FA, FP, FV);
-tbl1 = [tbl1, S11_M_table, S11_P_table, S12_M_table, S12_P_table, ...
-            S21_M_table, S21_P_table, S22_M_table, S22_P_table];
+tbl1 = [tbl1, S11_R_table, S11_I_table, S12_R_table, S12_I_table, ...
+            S21_R_table, S21_I_table, S22_R_table, S22_I_table];
 
 % Create LME formula
 % TR ~ S-parameters + COND + (1|PID) + (COND|PID)
-predAll = ["S11_M", "S11_P", "S21_M", "S21_P", "S22_M", "S22_P"];
+predAll = ["S11_R", "S11_I", "S21_R", "S21_I", "S22_R", "S22_I"];
 fixed_AllUWB = "";
 for pred = 1:length(predAll)
     for i = 1:51
@@ -149,19 +149,19 @@ FL = zeros(100, 1); FV = zeros(100, 1);
 FA = zeros(100, 1); FP = zeros(100, 1);
 
 % Initialise estimation variables
-S11_M = zeros(100, 51); S11_P = zeros(100, 51);
-S12_M = zeros(100, 51); S12_P = zeros(100, 51);
-S21_M = zeros(100, 51); S21_P = zeros(100, 51);
-S22_M = zeros(100, 51); S22_P = zeros(100, 51);
+S11_R = zeros(100, 51); S11_I = zeros(100, 51);
+S12_R = zeros(100, 51); S12_I = zeros(100, 51);
+S21_R = zeros(100, 51); S21_I = zeros(100, 51);
+S22_R = zeros(100, 51); S22_I = zeros(100, 51);
 
 count = 0;
 for j = 1 : size(PIDs, 1)
     n = PIDs(j,:);
-    files = dir(fullfile(myDir, ['S', n], '*.mat'));
+    files = dir(fullfile(myDir, ['S', n, '*.mat']));
     
     % Fill in each variable array for only test condition
     for k = cond
-        file = load(fullfile(myDir, ['S', n], files(k).name));
+        file = load(fullfile(myDir, files(k).name));
         ResDat = file.ALL.ValDat;
         FixDat = file.ALL;
         bounds = count*100 + 1 : 100*(count+1);
@@ -173,36 +173,36 @@ for j = 1 : size(PIDs, 1)
         FL(bounds) = ResDat.FL(2:end); FA(bounds) = ResDat.FA(2:end);
         FP(bounds) = ResDat.FP(2:end); FV(bounds) = ResDat.FV(2:end);
 
-        file = load(fullfile(myDir, ['S', n], files(k).name));
-        S11_M(bounds, :) = FixDat.S11_M_Dat{2:end, :};
-        S11_P(bounds, :) = FixDat.S11_P_Dat{2:end, :};
-        S12_M(bounds, :) = FixDat.S12_M_Dat{2:end, :};
-        S12_P(bounds, :) = FixDat.S12_P_Dat{2:end, :};
-        S21_M(bounds, :) = FixDat.S21_M_Dat{2:end, :};
-        S21_P(bounds, :) = FixDat.S21_P_Dat{2:end, :};
-        S22_M(bounds, :) = FixDat.S22_M_Dat{2:end, :};
-        S22_P(bounds, :) = FixDat.S22_P_Dat{2:end, :};
+        file = load(fullfile(myDir, files(k).name));
+        S11_R(bounds, :) = FixDat.S11_R_Dat{2:end, :};
+        S11_I(bounds, :) = FixDat.S11_I_Dat{2:end, :};
+        S12_R(bounds, :) = FixDat.S12_R_Dat{2:end, :};
+        S12_I(bounds, :) = FixDat.S12_I_Dat{2:end, :};
+        S21_R(bounds, :) = FixDat.S21_R_Dat{2:end, :};
+        S21_I(bounds, :) = FixDat.S21_I_Dat{2:end, :};
+        S22_R(bounds, :) = FixDat.S22_R_Dat{2:end, :};
+        S22_I(bounds, :) = FixDat.S22_I_Dat{2:end, :};
         count = count + 1;
     end
 end
 
 % Sort each array into a table for easier access of each frequency
-S11_M_table = array2table(S11_M); S11_P_table = array2table(S11_P);
-S12_M_table = array2table(S12_M); S12_P_table = array2table(S12_P);
-S21_M_table = array2table(S21_M); S21_P_table = array2table(S21_P);
-S22_M_table = array2table(S22_M); S22_P_table = array2table(S22_P);
-S11_M_table.Properties.VariableNames = strcat("S11_M_", string(1:51));
-S11_P_table.Properties.VariableNames = strcat("S11_P_", string(1:51));
-S12_M_table.Properties.VariableNames = strcat("S12_M_", string(1:51));
-S12_P_table.Properties.VariableNames = strcat("S12_P_", string(1:51));
-S21_M_table.Properties.VariableNames = strcat("S21_M_", string(1:51));
-S21_P_table.Properties.VariableNames = strcat("S21_P_", string(1:51));
-S22_M_table.Properties.VariableNames = strcat("S22_M_", string(1:51));
-S22_P_table.Properties.VariableNames = strcat("S22_P_", string(1:51));
+S11_R_table = array2table(S11_R); S11_I_table = array2table(S11_I);
+S12_R_table = array2table(S12_R); S12_I_table = array2table(S12_I);
+S21_R_table = array2table(S21_R); S21_I_table = array2table(S21_I);
+S22_R_table = array2table(S22_R); S22_I_table = array2table(S22_I);
+S11_R_table.Properties.VariableNames = strcat("S11_R_", string(1:51));
+S11_I_table.Properties.VariableNames = strcat("S11_I_", string(1:51));
+S12_R_table.Properties.VariableNames = strcat("S12_R_", string(1:51));
+S12_I_table.Properties.VariableNames = strcat("S12_I_", string(1:51));
+S21_R_table.Properties.VariableNames = strcat("S21_R_", string(1:51));
+S21_I_table.Properties.VariableNames = strcat("S21_I_", string(1:51));
+S22_R_table.Properties.VariableNames = strcat("S22_R_", string(1:51));
+S22_I_table.Properties.VariableNames = strcat("S22_I_", string(1:51));
 
 tbl3 = table(PID, COND, TL, TR, MG, LG, FL, FA, FP, FV);
-tbl3 = [tbl3, S11_M_table, S11_P_table, S12_M_table, S12_P_table, ...
-            S21_M_table, S21_P_table, S22_M_table, S22_P_table];
+tbl3 = [tbl3, S11_R_table, S11_I_table, S12_R_table, S12_I_table, ...
+            S21_R_table, S21_I_table, S22_R_table, S22_I_table];
 
 TR_pred = predict(TR_lme, tbl3);
 
@@ -254,7 +254,7 @@ NRMSE = RMSE / max(meas_dat);
 disp(NRMSE)
 
 %% Section 3: Plot all cond of one PID
-SDir = 'C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\LME models\Participant dependent\S10 ALL';
+SDir = 'C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\LME models\Rect\S01_ALL';
 condAll = ['01'; '02'; '03'; '04'; '05'; '06'; '07'; '08'; '09'; '10'; '11'; '12'];
 
 set(0, 'DefaultAxesTickLabelInterpreter', 'latex');
