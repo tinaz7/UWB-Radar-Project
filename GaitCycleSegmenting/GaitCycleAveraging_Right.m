@@ -15,8 +15,8 @@ clear
 summary1 = readtable('Participant Data Summary Export.xlsx', 'Sheet', 'Data Collection', 'VariableNamingRule', 'preserve');
 summary2 = readtable('Participant Data Summary Export.xlsx', 'Sheet', 'Normalising', 'VariableNamingRule', 'preserve');
 
-n = "15"; % Trial number
-PID = "10"; % PID
+n = "25"; % Trial number
+PID = "02"; % PID
 
 nMin = 10; % Number of gait cycles to keep
 format long
@@ -91,7 +91,7 @@ nexttile; plot(S21_I')
 S11_R_split = []; S11_I_split = []; S22_R_split = []; S22_I_split = [];
 S21_R_split = []; S21_I_split = [];
 
-Gait cycle split every frequency for each S coefficient
+%Gait cycle split every frequency for each S coefficient
 for i = 1 : 51
     S11_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11_R(i,:)', uwb_file.times_uwb(i, :));
     S11_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11_I(i,:)', uwb_file.times_uwb(i, :));
