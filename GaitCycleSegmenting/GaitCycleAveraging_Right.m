@@ -43,13 +43,9 @@ qtm_fileLoc = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\EXO_UWB\Data\ExoUWB
 qtm_fileName = "ExoUWB_S" + PID + "_Trial_00" + n + ".mat";
 qtm_file = load(fullfile(qtm_fileLoc, qtm_fileName));
 
-uwbBP_fileLoc = "Z:\Data Collection 3\Processed Data\S" + PID + "\Synchronised UWB Rect Chris";
-uwbBP_fileName = "RadarData_S" + PID + "_Trial_00" + n + ".mat";
-uwbBP_file = load(fullfile(uwbBP_fileLoc, uwbBP_fileName));
-
-uwbLP_fileLoc = "Z:\Data Collection 3\Processed Data\S" + PID + "\Synchronised UWB Rect No Highpass";
-uwbLP_fileName = "RadarData_S" + PID + "_Trial_00" + n + ".mat";
-uwbLP_file = load(fullfile(uwbLP_fileLoc, uwbLP_fileName));
+uwb_fileLoc = "Z:\Data Collection 3\Processed Data\S" + PID + "\Synchronised UWB Rect No Highpass";
+uwb_fileName = "RadarData_S" + PID + "_Trial_00" + n + ".mat";
+uwb_file = load(fullfile(uwb_fileLoc, uwb_fileName));
 
 force_fileLoc = "Z:\Data Collection 3\Processed Data\S" + PID + "\Muscle Redundancy Solver";
 force_fileName = "ExoUWB_S" + PID + "_Trial_00" + n + "_Results.mat";
@@ -67,21 +63,16 @@ GRF_Right = filtfilt(b_grf_lp, a_grf_lp, qtm_file.(fieldName{1}).Force(2).Force(
 
 %% Section 2: Rectangular UWB Processing
 
-% Extract data from BP file
-S11_R = uwbBP_file.S11_R; S11_I = uwbBP_file.S11_I;
-S21_R = uwbBP_file.S21_R; S21_I = uwbBP_file.S21_I;
-S22_R = uwbBP_file.S22_R; S22_I = uwbBP_file.S22_I;
-
 % Extract data from LP file
-S11LP_R = uwbLP_file.S11_R; S11LP_I = uwbLP_file.S11_I;
-S21LP_R = uwbLP_file.S21_R; S21LP_I = uwbLP_file.S21_I;
-S22LP_R = uwbLP_file.S22_R; S22LP_I = uwbLP_file.S22_I;
+S11_R = uwb_file.S11_R; S11_I = uwb_file.S11_I;
+S21_R = uwb_file.S21_R; S21_I = uwb_file.S21_I;
+S22_R = uwb_file.S22_R; S22_I = uwb_file.S22_I;
 
-[~,idx_start] = min(abs(time - min(uwbBP_file.times_uwb(:,1))));
-[~,idx_end] = min(abs(time - max(uwbBP_file.times_uwb(:, end))));
+[~,idx_start] = min(abs(time - min(uwb_file.times_uwb(:,1))));
+[~,idx_end] = min(abs(time - max(uwb_file.times_uwb(:, end))));
 
-uwb_times = linspace(max(uwbBP_file.times_uwb(:,1)), ...
-                     min(uwbBP_file.times_uwb(:,end)), 2155);
+uwb_times = linspace(max(uwb_file.times_uwb(:,1)), ...
+                     min(uwb_file.times_uwb(:,end)), 2155);
 time_cropped = time(idx_start+1:idx_end-1);
 
 % Use the UWB start and end times to crop the ankle moments
@@ -93,45 +84,27 @@ ankle_r_moment_split = GaitCycleSplit(GRF_Right, ankle_r_moment_interp, time_cro
 S11_R_split = []; S11_I_split = []; 
 S22_R_split = []; S22_I_split = [];
 S21_R_split = []; S21_I_split = [];
-% Initialise for LP radar data
-S11LP_R_split = []; S11LP_I_split = []; 
-S22LP_R_split = []; S22LP_I_split = [];
-S21LP_R_split = []; S21LP_I_split = [];
 
 %Gait cycle split every frequency for each S coefficient
-% for i = 1 : 51
-%     S11_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11_R(i,:)', uwbBP_file.times_uwb(i, :));
-%     S11_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11_I(i,:)', uwbBP_file.times_uwb(i, :));
-%     S21_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S21_R(i,:)', uwbBP_file.times_uwb(i, :));
-%     S21_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S21_I(i,:)', uwbBP_file.times_uwb(i, :));
-%     S22_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S22_R(i,:)', uwbBP_file.times_uwb(i, :));
-%     S22_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S22_I(i,:)', uwbBP_file.times_uwb(i, :));
-% 
-%     S11LP_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11LP_R(i,:)', uwbLP_file.times_uwb(i, :));
-%     S11LP_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11LP_I(i,:)', uwbLP_file.times_uwb(i, :));
-%     S21LP_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S21LP_R(i,:)', uwbLP_file.times_uwb(i, :));
-%     S21LP_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S21LP_I(i,:)', uwbLP_file.times_uwb(i, :));
-%     S22LP_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S22LP_R(i,:)', uwbLP_file.times_uwb(i, :));
-%     S22LP_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S22LP_I(i,:)', uwbLP_file.times_uwb(i, :));
-% end
+for i = 1 : 51
+    S11_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11_R(i,:)', uwb_file.times_uwb(i, :));
+    S11_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11_I(i,:)', uwb_file.times_uwb(i, :));
+    S21_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S21_R(i,:)', uwb_file.times_uwb(i, :));
+    S21_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S21_I(i,:)', uwb_file.times_uwb(i, :));
+    S22_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S22_R(i,:)', uwb_file.times_uwb(i, :));
+    S22_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S22_I(i,:)', uwb_file.times_uwb(i, :));
+end
 
 % for S10 n = 15, uwb times were causing issues because of time differences
 % between frequencies
-for i = 1 : 51
-    S11_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11_R(i,:)', uwb_times);
-    S11_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11_I(i,:)', uwb_times);
-    S21_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S21_R(i,:)', uwb_times);
-    S21_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S21_I(i,:)', uwb_times);
-    S22_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S22_R(i,:)', uwb_times);
-    S22_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S22_I(i,:)', uwb_times);
-
-    S11LP_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11LP_R(i,:)', uwb_times);
-    S11LP_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11LP_I(i,:)', uwb_times);
-    S21LP_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S21LP_R(i,:)', uwb_times);
-    S21LP_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S21LP_I(i,:)', uwb_times);
-    S22LP_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S22LP_R(i,:)', uwb_times);
-    S22LP_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S22LP_I(i,:)', uwb_times);
-end
+% for i = 1 : 51
+%     S11_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11_R(i,:)', uwb_times);
+%     S11_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S11_I(i,:)', uwb_times);
+%     S21_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S21_R(i,:)', uwb_times);
+%     S21_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S21_I(i,:)', uwb_times);
+%     S22_R_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S22_R(i,:)', uwb_times);
+%     S22_I_split(1:100, :, i) = GaitCycleSplit(GRF_Right, S22_I(i,:)', uwb_times);
+% end
 
 % Remove the same outliers for all UWB frequencies and right ankle torque
 % BP
@@ -139,21 +112,10 @@ end
  S22_R_splitClean, S22_I_splitClean, ankle_r_moment_splitClean] = GaitCycleRemoveSameOutliers_nD(...
  S11_R_split, S11_I_split, S21_R_split, S21_I_split, ...
  S22_R_split, S22_I_split, ankle_r_moment_split, nMin);
-% LP
-[S11LP_R_splitClean, S11LP_I_splitClean, ...
- S21LP_R_splitClean, S21LP_I_splitClean, ...
- S22LP_R_splitClean, S22LP_I_splitClean, ankle_r_moment_splitClean] = GaitCycleRemoveSameOutliers_nD(...
- S11LP_R_split, S11LP_I_split, ...
- S21LP_R_split, S21LP_I_split, ...
- S22LP_R_split, S22LP_I_split, ankle_r_moment_split, nMin);
 
 S11_R_avg = zeros(100, 51); S11_I_avg = zeros(100, 51);
 S21_R_avg = zeros(100, 51); S21_I_avg = zeros(100, 51);
 S22_R_avg = zeros(100, 51); S22_I_avg = zeros(100, 51);
-
-S11LP_R_avg = zeros(100, 51); S11LP_I_avg = zeros(100, 51);
-S21LP_R_avg = zeros(100, 51); S21LP_I_avg = zeros(100, 51);
-S22LP_R_avg = zeros(100, 51); S22LP_I_avg = zeros(100, 51);
 
 for i = 1:51
     S11_R_avg(:, i) = mean(S11_R_splitClean(:,:,i), 2)';
@@ -162,38 +124,23 @@ for i = 1:51
     S21_I_avg(:, i) = mean(S21_I_splitClean(:,:,i), 2)';
     S22_R_avg(:, i) = mean(S22_R_splitClean(:,:,i), 2)';
     S22_I_avg(:, i) = mean(S22_I_splitClean(:,:,i), 2)';
-
-    S11LP_R_avg(:, i) = mean(S11LP_R_splitClean(:,:,i), 2)';
-    S11LP_I_avg(:, i) = mean(S11LP_I_splitClean(:,:,i), 2)';
-    S21LP_R_avg(:, i) = mean(S21LP_R_splitClean(:,:,i), 2)';
-    S21LP_I_avg(:, i) = mean(S21LP_I_splitClean(:,:,i), 2)';
-    S22LP_R_avg(:, i) = mean(S22LP_R_splitClean(:,:,i), 2)';
-    S22LP_I_avg(:, i) = mean(S22LP_I_splitClean(:,:,i), 2)';
 end
 
-S11_M_avg = 20*log10(sqrt((S11LP_R_avg).^2 + (S11LP_I_avg).^2));
-S11_P_avg = unwrap(atan2(S11LP_I_avg, S11LP_R_avg), [], 1);
-S21_M_avg = 20*log10(sqrt((S21LP_R_avg).^2 + (S21LP_I_avg).^2));
-S21_P_avg = unwrap(atan2(S21LP_I_avg, S21LP_R_avg), [], 1);
-S22_M_avg = 20*log10(sqrt((S22LP_R_avg).^2 + (S22LP_I_avg).^2));
-S22_P_avg = unwrap(atan2(S22LP_I_avg, S22LP_R_avg), [], 1);
-
-% Highpass gait-cycle averaged mag and phase data
-S11HP_M_avg = S11_M_avg - mean(S11_M_avg);
-S11HP_P_avg = S11_P_avg - mean(S11_P_avg);
-S21HP_M_avg = S21_M_avg - mean(S21_M_avg);
-S21HP_P_avg = S21_P_avg - mean(S21_P_avg);
-S22HP_M_avg = S22_M_avg - mean(S22_M_avg);
-S22HP_P_avg = S22_P_avg - mean(S22_P_avg);
+S11_M_avg = 20*log10(sqrt((S11_R_avg).^2 + (S11_I_avg).^2));
+S11_P_avg = unwrap(atan2(S11_I_avg, S11_R_avg), [], 1);
+S21_M_avg = 20*log10(sqrt((S21_R_avg).^2 + (S21_I_avg).^2));
+S21_P_avg = unwrap(atan2(S21_I_avg, S21_R_avg), [], 1);
+S22_M_avg = 20*log10(sqrt((S22_R_avg).^2 + (S22_I_avg).^2));
+S22_P_avg = unwrap(atan2(S22_I_avg, S22_R_avg), [], 1);
 
 figure(1); clf
 tiledlayout(3,2)
-nexttile(1); plot(S11HP_M_avg)
-nexttile(2); plot(S11HP_P_avg)
-nexttile(3); plot(S21HP_M_avg)
-nexttile(4); plot(S21HP_P_avg)
-nexttile(5); plot(S22HP_M_avg)
-nexttile(6); plot(S22HP_P_avg)
+nexttile(1); plot(S11_M_avg)
+nexttile(2); plot(S11_P_avg)
+nexttile(3); plot(S21_M_avg)
+nexttile(4); plot(S21_P_avg)
+nexttile(5); plot(S22_M_avg)
+nexttile(6); plot(S22_P_avg)
 
 figure(2); clf
 tiledlayout(3,2)
@@ -269,12 +216,12 @@ S21_I_Dat = array2table(S21_I_avg, "VariableNames", S21_I_labels);
 S22_R_Dat = array2table(S22_R_avg, "VariableNames", S22_R_labels);
 S22_I_Dat = array2table(S22_I_avg, "VariableNames", S22_I_labels);
 
-S11_M_Dat = array2table(S11HP_M_avg, "VariableNames", S11_M_labels);
-S11_P_Dat = array2table(S11HP_P_avg, "VariableNames", S11_P_labels);
-S21_M_Dat = array2table(S21HP_M_avg, "VariableNames", S21_M_labels);
-S21_P_Dat = array2table(S21HP_P_avg, "VariableNames", S21_P_labels);
-S22_M_Dat = array2table(S22HP_M_avg, "VariableNames", S22_M_labels);
-S22_P_Dat = array2table(S22HP_P_avg, "VariableNames", S22_P_labels);
+S11_M_Dat = array2table(S11_M_avg, "VariableNames", S11_M_labels);
+S11_P_Dat = array2table(S11_P_avg, "VariableNames", S11_P_labels);
+S21_M_Dat = array2table(S21_M_avg, "VariableNames", S21_M_labels);
+S21_P_Dat = array2table(S21_P_avg, "VariableNames", S21_P_labels);
+S22_M_Dat = array2table(S22_M_avg, "VariableNames", S22_M_labels);
+S22_P_Dat = array2table(S22_P_avg, "VariableNames", S22_P_labels);
 
 ALL.S11_R_Dat = S11_R_Dat; ALL.S11_I_Dat = S11_I_Dat;
 ALL.S21_R_Dat = S21_R_Dat; ALL.S21_I_Dat = S21_I_Dat;
@@ -284,6 +231,6 @@ ALL.S11_M_Dat = S11_M_Dat; ALL.S11_P_Dat = S11_P_Dat;
 ALL.S21_M_Dat = S21_M_Dat; ALL.S21_P_Dat = S21_P_Dat;
 ALL.S22_M_Dat = S22_M_Dat; ALL.S22_P_Dat = S22_P_Dat;
 
-destDir = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\GaitCycleAveraged\RightLegAverage\S" + PID;
+destDir = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\GaitCycleAveraged\RightLegAverage_LP\S" + PID;
 save(fullfile(destDir, "S" + PID + "_Trial_00" + n + "_UWB_Forces.mat"), 'ALL')
 
