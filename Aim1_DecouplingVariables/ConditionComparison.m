@@ -248,20 +248,19 @@ end
 set(groot, 'DefaultTextInterpreter', 'latex', ...
            'DefaultAxesTickLabelInterpreter', 'latex', ...
            'DefaultLegendInterpreter', 'latex');
-set(groot, 'DefaultAxesFontSize',16);
-set(groot, 'DefaultTextFontSize', 14);
-
-colset1 = orderedcolors("gem12");
-col1 = [colset1(9,:), 0.25]; col2 = [colset1(3,:), 0.25];
-col3 = colset1(9,:); col4 = colset1(3,:);
-lw2 = 2;
+set(groot, 'DefaultAxesFontSize',8);
+set(groot, 'DefaultTextFontSize', 8);
 
 fig = figure(1); clf
-
 fig.Units = 'inches';
-fig.Position = [0.1, 0.1, 22/16*9, 18]; % x, y, width, height in cm
+fig.Position = [0.1, 0.1, 3.5, 4];
 
-tiledlayout(12,3);
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 3.5 4];
+fig.PaperSize = [3.5 4];
+
+tiledlayout(3, 2, 'TileSpacing', 'loose', 'Padding', 'compact');
+% tiledlayout(3,2)
 
 function fillPlot(p1Dat, p2Dat, p3Dat)
     arguments
@@ -274,7 +273,7 @@ function fillPlot(p1Dat, p2Dat, p3Dat)
     colset1 = orderedcolors("gem12");
     col1 = [colset1(9,:), 0.25]; col2 = [colset1(3,:), 0.25];
     col3 = colset1(9,:); col4 = colset1(3,:);
-    lw2 = 2;
+    lw2 = 1;
     
     p1S = std(p1Dat, 0, 2);
     p2S = std(p2Dat, 0 ,2);
@@ -303,119 +302,115 @@ function fillPlot(p1Dat, p2Dat, p3Dat)
     end
 
     xticks([0, 20, 40, 60, 80, 100]); 
-    yline(0, '--', 'Layer', 'bottom')
+    % yline(0, '--', 'Layer', 'bottom')
+
+    grid on
+
+    ax = gca; 
+    ax.GridColor = [0.25 0.25 0.25];
+    ax.GridLineWidth = 0.3;
+    ax.Layer = 'top';
 
 end
 
-nexttile(26, [4 1]);
-ylabel({'Ankle Joint Torque','(Nm$\cdot$ kg$^{-1}$)'})
+nexttile(6);
+% ylabel({'Ankle Joint Torque','(Nm$\cdot$ kg$^{-1}$)'})
 hold on; grid on
-fillPlot(I0_A00_S100_TL, I5_A00_S100_TL)
-xticklabels([]); ylim([-inf 2.5])
+fillPlot([I0_A00_S100_TL, I0_A15_S100_TL, I0_A00_S085_TL, I0_A15_S085_TL, I0_A00_S115_TL, I0_A15_S115_TL], ...
+         [I5_A00_S100_TL, I5_A15_S100_TL, I5_A00_S085_TL, I5_A15_S085_TL, I5_A00_S115_TL, I5_A15_S115_TL])
+% xlabel("Gait Cycle (\%)");
+ylim([-1 3]); yticks([-1 0 1 2 3])
 
-nexttile(2, [4, 1]); 
-ylabel({'MG Fascicle Strain', '(\% from rest)'})
+nexttile(1); 
+% ylabel({'MG Fascicle Strain', '(\% from rest)'})
 hold on; grid on
-fillPlot(I0_A00_S100_FL*100, I5_A00_S100_FL*100)
-xticklabels([]); ylim([-inf 150])
+fillPlot([I0_A00_S100_FL, I0_A15_S100_FL, I0_A00_S085_FL, I0_A15_S085_FL, I0_A00_S115_FL, I0_A15_S115_FL]*100, ...
+         [I5_A00_S100_FL, I5_A15_S100_FL, I5_A00_S085_FL, I5_A15_S085_FL, I5_A00_S115_FL, I5_A15_S115_FL]*100)
+xticklabels([]); ylim([0 150]); yticks(0:50:150)
 
-nexttile(14, [4 1]); 
-xlabel("Gait Cycle (\%)"); ylabel({'MG Fascicle Strain Rate', '(\%$\cdot s^{-1}$)'})
+nexttile(3); 
+% xlabel("Gait Cycle (\%)"); ylabel({'MG Fascicle Strain Rate', '(\%$\cdot s^{-1}$)'})
 hold on; grid on
-fillPlot(I0_A00_S100_FV*100, I5_A00_S100_FV*100)
+fillPlot([I0_A00_S100_FV, I0_A15_S100_FV, I0_A00_S085_FV, I0_A15_S085_FV, I0_A00_S115_FV, I0_A15_S115_FV]*100, ...
+         [I5_A00_S100_FV, I5_A15_S100_FV, I5_A00_S085_FV, I5_A15_S085_FV, I5_A00_S115_FV, I5_A15_S115_FV]*100)
+ylim([-400 400]);  yticks(-400:200:400)
 
-nexttile(3, [3 1]); 
-ylabel({'MG Activation', '(\% MVC)'})
+nexttile(2); 
+% ylabel({'MG Activation', '(\% MVC)'})
 hold on; grid on
-fillPlot(I0_A00_S100_MG*100, I5_A00_S100_MG*100)
-xticklabels([]); ylim([0 80.001])
+fillPlot([I0_A00_S100_MG, I0_A15_S100_MG, I0_A00_S085_MG, I0_A15_S085_MG, I0_A00_S115_MG, I0_A15_S115_MG]*100, ...
+         [I5_A00_S100_MG, I5_A15_S100_MG, I5_A00_S085_MG, I5_A15_S085_MG, I5_A00_S115_MG, I5_A15_S115_MG]*100)
+xticklabels([]); ylim([0 80]); yticks(0:20:80)
 
-nexttile(12, [3 1]);
-ylabel({'LG Activation', '(\% MVC)'})
+nexttile(4);
+% ylabel({'LG Activation', '(\% MVC)'})
 hold on; grid on
-fillPlot(I0_A00_S100_LG*100, I5_A00_S100_LG*100)
-xticklabels([]); ylim([0 80.001])
+fillPlot([I0_A00_S100_LG, I0_A15_S100_LG, I0_A00_S085_LG, I0_A15_S085_LG, I0_A00_S115_LG, I0_A15_S115_LG]*100, ...
+         [I5_A00_S100_LG, I5_A15_S100_LG, I5_A00_S085_LG, I5_A15_S085_LG, I5_A00_S115_LG, I5_A15_S115_LG]*100)
+xticklabels([]); ylim([0 80]); yticks(0:20:80)
 
-nexttile(21, [3 1]);
-ylabel({'SOL Activation', '(\% MVC)'})
-hold on; grid on
-fillPlot(I0_A00_S100_SOL*100, I5_A00_S100_SOL*100)
-xticklabels([]); ylim([0 80.001])
-
-nexttile(30, [3 1]);
-xlabel("Gait Cycle (\%)"); ylabel({'TA Activation', '(\% MVC)'})
-hold on; grid on
-fillPlot(I0_A00_S100_TA*100, I5_A00_S100_TA*100)
-ylim([0 80.001])
-
-nexttile(31, [1 1]); hold on
-plot(NaN, NaN, 'Color', col3, "LineWidth", lw2);
-plot(NaN, NaN, 'Color', col4, "LineWidth", lw2);
-
-leg = legend({'Level ($0^{o}$)', 'Incline ($5^{o}$)'});
-leg.Layout.Tile = 31; leg.FontName = 'Times New Roman'; leg.FontSize = 12;
+nexttile(5); hold on
+plot(NaN, NaN, 'Color', col3, "LineWidth", 1);
+plot(NaN, NaN, 'Color', col4, "LineWidth", 1);
+legend('Level ($0^{o}$)', 'Incline ($5^{o}$)')
 axis off
 
 outLoc = 'C:\Users\zheng\OneDrive\Desktop\ENGG7291 Assessment\Paper\Figures';
 print(fig, [outLoc, '\InclineVsLevel.svg'], '-dsvg');
 %% Section 3: Assistance vs. No Assistance
-colset1 = orderedcolors("gem12");
-col3 = colset1(9,:); col4 = colset1(3,:);
-lw2 = 2;
-
 fig = figure(2); clf
 fig.Units = 'inches';
-fig.Position = [0.1, 0.1, 22/16*9, 18];
-tiledlayout(12,3);
+fig.Position = [0.1, 0.1, 3.5, 4];
 
-nexttile(10); hold on
-plot(NaN, NaN, 'Color', col3, "LineWidth", lw2);
-plot(NaN, NaN, 'Color', col4, "LineWidth", lw2);
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 3.5 4];
+fig.PaperSize = [3.5 4];
 
-leg = legend({'Zero Assistance ($0$ Nm$\cdot$kg$^{-1}$)', 'Assistance ($0.15$ Nm$\cdot$kg$^{-1}$)'});
-leg.Layout.Tile = 31; leg.FontName = 'Times New Roman'; leg.FontSize = 12;
-axis off
+tiledlayout(3, 2, 'TileSpacing', 'loose', 'Padding', 'compact');
 
-nexttile(26, [4 1]);
-ylabel({'Ankle Joint Torque','(Nm$\cdot$ kg$^{-1}$)'})
+% nexttile(5); hold on
+% plot(NaN, NaN, 'Color', col3, "LineWidth", 1);
+% plot(NaN, NaN, 'Color', col4, "LineWidth", 1);
+% 
+% leg = legend({'Zero Assistance ($0$ Nm$\cdot$kg$^{-1}$)', 'Assistance ($0.15$ Nm$\cdot$kg$^{-1}$)'});
+% leg.Layout.Tile = 5; leg.FontName = 'Times New Roman'; leg.FontSize = 12;
+% axis off
+
+nexttile(6);
+% ylabel({'Ankle Joint Torque','(Nm$\cdot$ kg$^{-1}$)'})
 hold on; grid on
-fillPlot(I0_A00_S100_TL, I0_A15_S100_TL)
-xticklabels([]); ylim([-inf 2])
+fillPlot([I0_A00_S100_TL, I5_A00_S100_LG, I0_A00_S085_TL, I5_A00_S085_TL, I0_A00_S115_TL, I5_A00_S115_TL], ...
+         [I0_A15_S100_TL, I5_A15_S100_LG, I0_A15_S085_TL, I5_A15_S085_TL, I0_A15_S115_TL, I5_A15_S115_TL])
+% xlabel("Gait Cycle (\%)"); 
+ylim([-1 3]); yticks(-1:1:3)
 
-nexttile(2, [4, 1]); 
-ylabel({'MG Fascicle Strain', '(\% from rest)'})
+nexttile(1); 
+% ylabel({'MG Fascicle Strain', '(\% from rest)'})
 hold on; grid on
-fillPlot(I0_A00_S100_FL*100, I0_A15_S100_FL*100)
-xticklabels([]); ylim([-inf 150])
+fillPlot([I0_A00_S100_FL, I5_A00_S100_FL, I0_A00_S085_FL, I5_A00_S085_FL, I0_A00_S115_FL, I5_A00_S115_FL]*100, ...
+         [I0_A15_S100_FL, I5_A15_S100_FL, I0_A15_S085_FL, I5_A15_S085_FL, I0_A15_S115_FL, I5_A15_S115_FL]*100)
+xticklabels([]); ylim([0 150]); yticks(0:50:150)
 
-nexttile(14, [4 1]); 
-xlabel("Gait Cycle (\%)"); ylabel({'MG Fascicle Strain Rate', '(\%$\cdot s^{-1}$)'})
+nexttile(3); 
+% xlabel("Gait Cycle (\%)"); ylabel({'MG Fascicle Strain Rate', '(\%$\cdot s^{-1}$)'})
 hold on; grid on
-fillPlot(I0_A00_S100_FV*100, I0_A15_S100_FV*100)
+fillPlot([I0_A00_S100_FV, I5_A00_S100_FV, I0_A00_S085_FV, I5_A00_S085_FV, I0_A00_S115_FV, I5_A00_S115_FV]*100, ...
+         [I0_A15_S100_FV, I5_A15_S100_FV, I0_A15_S085_FV, I5_A15_S085_FV, I0_A15_S115_FV, I5_A15_S115_FV]*100)
+ylim([-400 400]); yticks(-400:200:400)
 
-nexttile(3, [3 1]); 
-ylabel({'MG Activation', '(\% MVC)'})
+nexttile(2); 
+% ylabel({'MG Activation', '(\% MVC)'})
 hold on; grid on
-fillPlot(I0_A00_S100_MG*100, I0_A15_S100_MG*100)
+fillPlot([I0_A00_S100_MG, I5_A00_S100_MG, I0_A00_S085_MG, I5_A00_S085_MG, I0_A00_S115_MG, I5_A00_S115_MG]*100, ...
+         [I0_A15_S100_MG, I5_A15_S100_MG, I0_A15_S085_MG, I5_A15_S085_MG, I0_A15_S115_MG, I5_A15_S115_MG]*100)
 xticklabels([]); ylim([0 60])
 
-nexttile(12, [3 1]);
-ylabel({'LG Activation', '(\% MVC)'})
+nexttile(4);
+% ylabel({'LG Activation', '(\% MVC)'})
 hold on; grid on
-fillPlot(I0_A00_S100_LG*100, I0_A15_S100_LG*100)
+fillPlot([I0_A00_S100_LG, I5_A00_S100_LG, I0_A00_S085_LG, I5_A00_S085_LG, I0_A00_S115_LG, I5_A00_S115_LG]*100, ...
+         [I0_A15_S100_LG, I5_A15_S100_LG, I0_A15_S085_LG, I5_A15_S085_LG, I0_A15_S115_LG, I5_A15_S115_LG]*100)
 xticklabels([]); ylim([0 60])
-
-nexttile(21, [3 1]);
-ylabel({'SOL Activation', '(\% MVC)'})
-hold on; grid on
-fillPlot(I0_A00_S100_SOL*100, I0_A15_S100_SOL*100)
-xticklabels([]); ylim([0 60])
-
-nexttile(30, [3 1]);
-xlabel("Gait Cycle (\%)"); ylabel({'TA Activation', '(\% MVC)'})
-hold on; grid on
-fillPlot(I0_A00_S100_TA*100, I0_A15_S100_TA*100)
-ylim([0 60])
 
 outLoc = 'C:\Users\zheng\OneDrive\Desktop\ENGG7291 Assessment\Paper\Figures';
 print(fig, [outLoc, '\ZeroVsActive.svg'], '-dsvg');
@@ -434,58 +429,64 @@ lw2 = 2;
 
 fig = figure(3); clf
 fig.Units = 'inches';
-fig.Position = [0.1, 0.1, 22/16*9, 18];
-tiledlayout(12,3);
+fig.Position = [0.1, 0.1, 3.5, 4];
 
-nexttile(26, [4 1]);
-ylabel({'Ankle Joint Torque','(Nm$\cdot$ kg$^{-1}$)'})
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 3.5 4];
+fig.PaperSize = [3.5 4];
+
+tiledlayout(3, 2, 'TileSpacing', 'loose', 'Padding', 'compact');
+
+nexttile(6);
+% ylabel({'Ankle Joint Torque','(Nm$\cdot$ kg$^{-1}$)'})
 hold on; grid on
-fillPlot(I0_A00_S085_TL, I0_A00_S100_TL, I0_A00_S115_TL)
-xticklabels([]); ylim([-inf 2])
+fillPlot([I0_A00_S085_TL, I5_A00_S085_TL, I0_A15_S085_TL, I5_A15_S085_TL], ...
+         [I0_A00_S100_TL, I5_A00_S100_TL, I0_A15_S100_TL, I5_A15_S100_TL], ...
+         [I0_A00_S115_TL, I5_A00_S115_TL, I0_A15_S115_TL, I5_A15_S115_TL])
+% xlabel("Gait Cycle (\%)"); 
+ylim([-1 3]); yticks(-1:1:3)
 
-nexttile(2, [4, 1]); 
-ylabel({'MG Fascicle Strain', '(\% from rest)'})
+nexttile(1); 
+% ylabel({'MG Fascicle Strain', '(\% from rest)'})
 hold on; grid on
-fillPlot(I0_A00_S085_FL*100, I0_A00_S100_FL*100, I0_A00_S115_FL*100)
-xticklabels([]); ylim([-inf 1.5*100])
+fillPlot([I0_A00_S085_FL, I5_A00_S085_FL, I0_A15_S085_FL, I5_A15_S085_FL]*100, ...
+         [I0_A00_S100_FL, I5_A00_S100_FL, I0_A15_S100_FL, I5_A15_S100_FL]*100, ...
+         [I0_A00_S115_FL, I5_A00_S115_FL, I0_A15_S115_FL, I5_A15_S115_FL]*100)
+xticklabels([]);
+ylim([0 150]); yticks(0:50:150)
 
-nexttile(14, [4 1]); 
-xlabel("Gait Cycle (\%)"); ylabel({'MG Fascicle Strain Rate', '(\%$\cdot s^{-1}$)'})
+nexttile(3); 
+% xlabel("Gait Cycle (\%)"); ylabel({'MG Fascicle Strain Rate', '(\%$\cdot s^{-1}$)'})
 hold on; grid on
-fillPlot(I0_A00_S085_FV*100, I0_A00_S100_FV*100, I0_A00_S115_FV*100)
+fillPlot([I0_A00_S085_FV, I5_A00_S085_FV, I0_A15_S085_FV, I5_A15_S085_FV]*100, ...
+         [I0_A00_S100_FV, I5_A00_S100_FV, I0_A15_S100_FV, I5_A15_S100_FV]*100, ...
+         [I0_A00_S115_FV, I5_A00_S115_FV, I0_A15_S115_FV, I5_A15_S115_FV]*100)
+ylim([-400 400]); yticks(-400:200:400)
 
-nexttile(3, [3 1]); 
-ylabel({'MG Activation', '(\% MVC)'})
+nexttile(2); 
+% ylabel({'MG Activation', '(\% MVC)'})
 hold on; grid on
-fillPlot(I0_A00_S085_MG*100, I0_A00_S100_MG*100, I0_A00_S115_MG*100)
-xticklabels([]); ylim([0 0.6*100])
+fillPlot([I0_A00_S085_MG, I5_A00_S085_MG, I0_A15_S085_MG, I5_A15_S085_MG]*100, ...
+         [I0_A00_S100_MG, I5_A00_S100_MG, I0_A15_S100_MG, I5_A15_S100_MG]*100, ...
+         [I0_A00_S115_MG, I5_A00_S115_MG, I0_A15_S115_MG, I5_A15_S115_MG]*100)
+xticklabels([]); ylim([0 80]); yticks(0:20:80)
 
-nexttile(12, [3 1]);
-ylabel({'LG Activation', '(\% MVC)'})
+nexttile(4);
+% ylabel({'LG Activation', '(\% MVC)'})
 hold on; grid on
-fillPlot(I0_A00_S085_LG*100, I0_A00_S100_LG*100, I0_A00_S115_LG*100)
-xticklabels([]); ylim([0 0.6*100])
-
-nexttile(21, [3 1]);
-ylabel({'SOL Activation', '(\% MVC)'})
-hold on; grid on
-fillPlot(I0_A00_S085_SOL*100, I0_A00_S100_SOL*100, I0_A00_S115_SOL*100)
-xticklabels([]); ylim([0 0.6*100])
-
-nexttile(30, [3 1]);
-xlabel("Gait Cycle (\%)"); ylabel({'TA Activation', '(\% MVC)'})
-hold on; grid on
-fillPlot(I0_A00_S085_TA*100, I0_A00_S100_TA*100, I0_A00_S115_TA*100)
-ylim([0 0.6*100])
+fillPlot([I0_A00_S085_LG, I5_A00_S085_LG, I0_A15_S085_LG, I5_A15_S085_LG]*100, ...
+         [I0_A00_S100_LG, I5_A00_S100_LG, I0_A15_S100_LG, I5_A15_S100_LG]*100, ...
+         [I0_A00_S115_LG, I5_A00_S115_LG, I0_A15_S115_LG, I5_A15_S115_LG]*100)
+xticklabels([]); ylim([0 80]); yticks(0:20:80)
 
 
-nexttile(10); hold on
+nexttile(5); hold on
 plot(NaN, NaN, 'Color', col4, "LineWidth", lw2);
 plot(NaN, NaN, 'Color', col5, "LineWidth", lw2);
 plot(NaN, NaN, 'Color', col6, "LineWidth", lw2);
 
 leg = legend({'Slow (85\% PWS)', 'Medium (100\% PWS)', 'Fast (115\% PWS)'});
-leg.Layout.Tile = 31; leg.FontName = 'Times New Roman'; leg.FontSize = 12;
+leg.Layout.Tile = 5; leg.FontName = 'Times New Roman'; leg.FontSize = 8;
 axis off
 
 outLoc = 'C:\Users\zheng\OneDrive\Desktop\ENGG7291 Assessment\Paper\Figures';

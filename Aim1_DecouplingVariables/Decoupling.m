@@ -12,7 +12,7 @@
 %% Section 1: Pool data of all conditions from all participants
 clear
 
-myDir = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\GaitCycleAveraged";
+myDir = "C:\Users\zheng\OneDrive\Desktop\ENGG7291 Data\GaitCycleAveraged\Thesis Data";
 
 PIDs = dir(fullfile(myDir, "S*"));
 restLen = [12.83, 12.54, 13.19, 12.99, 14.03, 11.16, 13.67, 13.48, 10.71, 15.55];
@@ -27,13 +27,13 @@ MGLGRatio = []; allPennation = [];
 
 count = 0;
 
-for i = 1 : length(PIDs)
+for i = 2 : length(PIDs)
     trials = dir(fullfile(myDir, string(PIDs(i).name), "*.mat"));
     for j = 1 : length(trials)
         file = load(fullfile(myDir, PIDs(i).name, trials(j).name));
         data = file.ALL.ValDat;
         
-        TL(count*100+1:100*(count+1), 1) = data.TL(2:end);
+        TL(count*100+1:100*(count+1), 1) = -data.TL(2:end);
         MG(count*100+1:100*(count+1), 1) = data.MG(2:end) .* 100;
         LG(count*100+1:100*(count+1), 1) = data.LG(2:end) .* 100;
         FL(count*100+1:100*(count+1), 1) = data.FL(2:end) .* 100;
@@ -76,14 +76,23 @@ lmFLvFA = fitlme(allTable,'FL~FA');
 lmeMGvLG = fitlme(allTable,'MG~LG+(1|PID)');
 lmeFLvFA = fitlme(allTable,'FL~FA+(1|PID)');
 
+% Display lm R^2 values
+fprintf('TL-MG LM Rsqaured: ' + string(lmTLvMG.Rsquared.Adjusted) + '\n')
+fprintf('TL-LG LM Rsqaured: ' + string(lmTLvLG.Rsquared.Adjusted) + '\n')
+fprintf('TL-FL LM Rsqaured: ' + string(lmTLvFL.Rsquared.Adjusted) + '\n')
+fprintf('TL-FA LM Rsqaured: ' + string(lmTLvFA.Rsquared.Adjusted) + '\n')
+fprintf('TL-FV LM Rsqaured: ' + string(lmTLvFV.Rsquared.Adjusted) + '\n')
+% fprintf('MG-LG LM Rsqaured: ' + string(lmMGvLG.Rsquared.Adjusted) + '\n')
+% fprintf('FL-FA LM Rsqaured: ' + string(lmFLvFA.Rsquared.Adjusted) + '\n')
+
 % Display lme R^2 values
 fprintf('TL-MG LME Rsqaured: ' + string(lmeTLvMG.Rsquared.Adjusted) + '\n')
 fprintf('TL-LG LME Rsqaured: ' + string(lmeTLvLG.Rsquared.Adjusted) + '\n')
 fprintf('TL-FL LME Rsqaured: ' + string(lmeTLvFL.Rsquared.Adjusted) + '\n')
 fprintf('TL-FA LME Rsqaured: ' + string(lmeTLvFA.Rsquared.Adjusted) + '\n')
 fprintf('TL-FV LME Rsqaured: ' + string(lmeTLvFV.Rsquared.Adjusted) + '\n')
-fprintf('MG-LG LME Rsqaured: ' + string(lmeMGvLG.Rsquared.Adjusted) + '\n')
-fprintf('FL-FA LME Rsqaured: ' + string(lmeFLvFA.Rsquared.Adjusted) + '\n')
+% fprintf('MG-LG LME Rsqaured: ' + string(lmeMGvLG.Rsquared.Adjusted) + '\n')
+% fprintf('FL-FA LME Rsqaured: ' + string(lmeFLvFA.Rsquared.Adjusted) + '\n')
 
 
 %% Section 3: Plots (LM)
@@ -91,75 +100,66 @@ fprintf('FL-FA LME Rsqaured: ' + string(lmeFLvFA.Rsquared.Adjusted) + '\n')
 set(groot, 'DefaultTextInterpreter', 'latex', ...
            'DefaultAxesTickLabelInterpreter', 'latex', ...
            'DefaultLegendInterpreter', 'latex');
-set(groot, 'DefaultAxesFontSize', 14, ...
-           'DefaultTextFontSize', 14, ...
-           'DefaultLegendFontSize', 14)   
+set(groot, 'DefaultAxesFontSize', 8, ...
+           'DefaultTextFontSize', 8, ...
+           'DefaultLegendFontSize', 8)   
 colourset1 = orderedcolors("gem12");
 colourset2 = orderedcolors("gem12") .* 0.8;
 
-syms x
-
 % Musculoskeletal factors against torque
-figure (1)
-tiledlayout(2, 6)
-nexttile([1 3]); grid on; hold on
-scatter(MG, TL, 'Filled', 'MarkerFaceColor', colourset1(3, :), ...
-    'MarkerFaceAlpha', 0.2)
-axis manual;
-fplot(lmTLvMG.Coefficients.Estimate(2)*x + lmTLvMG.Coefficients.Estimate(1), ...
-    'Color', colourset2(3, :), 'LineWidth', 3)
-xlabel('MG Activation (\% MVC)'); ylabel('Ankle Joint Torque (Nm/kg)')
-text(0.95,0.9, "$R^2 =$ " + string(round(lmTLvMG.Rsquared.Adjusted, 3)), ...
-    'Units', 'normalized', 'HorizontalAlignment', 'right', ...
-    'VerticalAlignment', 'top', 'EdgeColor', 'k', 'BackgroundColor', 'w');
 
-nexttile([1 3]); grid on; hold on
-scatter(LG, TL, 'Filled', 'MarkerFaceColor', colourset1(5, :), ...
-    'MarkerFaceAlpha', 0.2)
-axis manual;
-fplot(lmTLvLG.Coefficients.Estimate(2)*x + lmTLvLG.Coefficients.Estimate(1), ...
-    'Color', colourset2(5, :), 'LineWidth', 3)
+fig = figure(1); clf
+fig.Units = 'inches';
+fig.Position = [1, 1, 7.16, 2];
+
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 7.16 2];
+fig.PaperSize = [7.16 2];
+
+tiledlayout(1, 4, 'Padding', 'compact')
+
+nexttile(3); grid on; hold on; axis square
+scatter(MG, TL, 8,'Filled', 'MarkerFaceColor', colourset1(2, :), 'MarkerFaceAlpha', 0.1)
+ylim([-1 3]); xlim([0 70]); xticks(0:35:70)
+x = min(MG):(max(MG)-min(MG))/100:max(MG);
+plot(x, lmTLvMG.Coefficients.Estimate(2)*x + lmTLvMG.Coefficients.Estimate(1), ...
+    'Color', colourset2(2, :), 'LineWidth', 1)
+xlabel('MG Activation (\% MVC)');
+ax = gca; ax.GridColor = [0.25 0.25 0.25]; ax.GridLineWidth = 0.3;
+
+nexttile(4); grid on; hold on; axis square
+scatter(LG, TL, 8, 'Filled', 'MarkerFaceColor', colourset1(5, :), 'MarkerFaceAlpha', 0.1)
+ylim([-1 3]); xlim([0 70]); xticks(0:35:70)
+x = min(LG):(max(LG)-min(LG))/100:max(LG);
+plot(x, lmTLvLG.Coefficients.Estimate(2)*x + lmTLvLG.Coefficients.Estimate(1), ...
+    'Color', colourset2(5, :), 'LineWidth', 1)
 xlabel('LG Activation (\% MVC)');
 yticklabels([])
-text(0.95,0.9, "$R^2 =$" + string(round(lmTLvLG.Rsquared.Adjusted, 3)), ...
-    'Units', 'normalized', 'HorizontalAlignment', 'right', ...
-    'VerticalAlignment', 'top', 'EdgeColor', 'k', 'BackgroundColor', 'w');
+ax = gca; ax.GridColor = [0.25 0.25 0.25]; ax.GridLineWidth = 0.3;
 
-nexttile([1 2]); grid on; hold on
-scatter(FL, TL, 'Filled', 'MarkerFaceColor', colourset1(2, :), ...
-    'MarkerFaceAlpha', 0.2)
-axis manual;
-fplot(lmTLvFL.Coefficients.Estimate(2)*x + lmTLvFL.Coefficients.Estimate(1), ...
-    'Color', colourset2(2, :), 'LineWidth', 3)
-xlabel('Fasicle Strain (\% from rest)'); ylabel('Ankle Joint Torque (Nm/kg)')
-text(0.05,0.1, "$R^2 =$" + string(round(lmTLvFL.Rsquared.Adjusted, 3)), ...
-    'Units', 'normalized', 'HorizontalAlignment', 'left', ...
-    'VerticalAlignment', 'bottom', 'EdgeColor', 'k', 'BackgroundColor', 'w');
-
-nexttile([1 2]); grid on; hold on
-scatter(FA, TL, 'Filled', 'MarkerFaceColor', colourset1(9, :), ...
-    'MarkerFaceAlpha', 0.2)
-axis manual;
-fplot(lmTLvFA.Coefficients.Estimate(2)*x + lmTLvFA.Coefficients.Estimate(1), ...
-    'Color', colourset2(9, :), 'LineWidth', 3)
-xlabel('Fasicle Pennation ($^{o}$ from rest)');
+nexttile(1); grid on; hold on; axis square
+scatter(FL, TL, 8, 'Filled', 'MarkerFaceColor', colourset1(4, :), 'MarkerFaceAlpha', 0.1)
+ylim([-1 3]); xlim([60 130]); xticks(60:35:130)
 yticklabels([])
-text(0.95,0.1, "$R^2 =$" + string(round(lmTLvFA.Rsquared.Adjusted,3 )), ...
-    'Units', 'normalized', 'HorizontalAlignment', 'right', ...
-    'VerticalAlignment', 'bottom', 'EdgeColor', 'k', 'BackgroundColor', 'w');
+x = min(FL):(max(FL)-min(FL))/100:max(FL);
+plot(x, lmTLvFL.Coefficients.Estimate(2)*x + lmTLvFL.Coefficients.Estimate(1), ...
+    'Color', colourset2(4, :), 'LineWidth', 1)
+xlabel('Fasicle Strain (\% from rest)');
+ax = gca; ax.GridColor = [0.25 0.25 0.25]; ax.GridLineWidth = 0.3;
 
-nexttile([1 2]); grid on; hold on
-scatter(FV, TL, 'Filled', 'MarkerFaceColor', colourset1(4, :), ...
-    'MarkerFaceAlpha', 0.2)
-axis manual;
-fplot(lmTLvFV.Coefficients.Estimate(2)*x + lmTLvFV.Coefficients.Estimate(1), ...
-    'Color', colourset2(4, :), 'LineWidth', 3)
-xlabel('Fascicle Strain Rate (\% $\cdot s^{-1}$)');
+nexttile(2); grid on; hold on; axis square
+scatter(FV, TL, 8, 'Filled', 'MarkerFaceColor', colourset1(7, :), 'MarkerFaceAlpha', 0.1)
+ylim([-1 3]); xlim([-400 500]); xticks(-400:450:500)
+x = min(FV):(max(FV)-min(FV))/100:max(FV);
+plot(x, lmTLvFV.Coefficients.Estimate(2)*x + lmTLvFV.Coefficients.Estimate(1), ...
+    'Color', colourset2(7, :), 'LineWidth', 1)
+xlabel('Fascicle Strain Rate (\%$\cdot$s$^{-1}$)');
 yticklabels([])
-text(0.95,0.1, "$R^2 =$" + string(round(lmTLvFV.Rsquared.Adjusted, 3)), ...
-    'Units', 'normalized', 'HorizontalAlignment', 'right', ...
-    'VerticalAlignment', 'bottom', 'EdgeColor', 'k', 'BackgroundColor', 'w');
+ax = gca; ax.GridColor = [0.25 0.25 0.25]; ax.GridLineWidth = 0.3;
 
+outLoc = 'C:\Users\zheng\OneDrive\Desktop\ENGG7291 Assessment\Paper\Figures';
+print(fig, [outLoc, '\Decoupling.svg'], '-dsvg');
+%%
 % Between musculoskeletal factors
 figure (2); clf
 tiledlayout(2,2)

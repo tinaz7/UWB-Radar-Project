@@ -7,7 +7,7 @@ library(lattice)
 library(emmeans)
 
 #### Find file
-setwd("C:/Users/zheng/OneDrive/Desktop/ENGG7291 Data/Condition Significance")
+setwd("C:/Users/zheng/OneDrive/Desktop/ENGG7291 Data/Data Collection/UWB-Radar-Project/Aim1_DecouplingVariables")
 ex <- fread('ComparisonParameters.csv') #this is all data
 
 ex$PID <- as.factor(ex$PID)
@@ -141,13 +141,13 @@ contrast(emmeans(m2, ~ Incline), "pairwise")
 contrast(emmeans(m2, ~ Assistance), "pairwise")
 contrast(emmeans(m2, ~ Speed), "pairwise")
 
-m2 = lme(FL_Avg ~ Incline + Assistance, random = ~ 1|PID, data=ex, method ='ML', na.action = "na.omit")
+m2 = lme(FL_Avg ~ Incline + Speed + Assistance, random = ~ 1|PID, data=ex, method ='ML', na.action = "na.omit")
 # Speed was insignificant (p = 0.1555) and therefore removed
 anova(m2)
 contrast(emmeans(m2, ~ Incline), "pairwise")
 contrast(emmeans(m2, ~ Assistance), "pairwise")
 
-m2 = lme(FL_Diff ~ Incline + Assistance, random = ~ 1|PID, data=ex, method ='ML', na.action = "na.omit")
+m2 = lme(FL_Diff ~ Incline + Assistance + Speed, random = ~ 1|PID, data=ex, method ='ML', na.action = "na.omit")
 # Speed was insignificant (p = 0.0513) and therefore removed
 anova(m2)
 contrast(emmeans(m2, ~ Incline), "pairwise")
@@ -164,7 +164,7 @@ anova(m2)
 contrast(emmeans(m2, ~ Incline), "pairwise")
 
 m2 = lme(FV_Peak ~ Assistance + Speed, random = ~ 1|PID, data=ex, method ='ML', na.action = "na.omit")
-# Incline was insignificant (p = 0.6651) and therefore removed
+# Incline was insignificant (p = 0.9156) and therefore removed
 anova(m2)
 contrast(emmeans(m2, ~ Assistance), "pairwise")
 contrast(emmeans(m2, ~ Speed), "pairwise")
@@ -181,10 +181,11 @@ anova(m2)
 contrast(emmeans(m2, ~ Incline), "pairwise")
 contrast(emmeans(m2, ~ Speed), "pairwise")
 
-m2 = lme(MG_Peak ~ Incline + Assistance + Speed, random = ~ 1|PID, data=ex, method ='ML', na.action = "na.omit")
+m2 = lme(MG_Peak ~ Incline + Speed + Assistance, random = ~ 1|PID, data=ex, method ='ML', na.action = "na.omit")
 # Assistance was insignificant (p = 0.5064) and therefore removed
 anova(m2)
 contrast(emmeans(m2, ~ Incline), "pairwise")
+contrast(emmeans(m2, ~ Assistance), "pairwise")
 contrast(emmeans(m2, ~ Speed), "pairwise")
 
 m2 = lme(LG_Avg ~ Incline + Speed, random = ~ 1|PID, data=ex, method ='ML', na.action = "na.omit")
